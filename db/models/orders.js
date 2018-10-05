@@ -1,11 +1,11 @@
-const Sequelize = require('sequelize');
-const db = require('../db');
+const Sequelize = require("sequelize");
+const db = require("../db");
 
-const Order = db.define('order', {
+const Order = db.define("order", {
   status: {
-    type: Sequelize.ENUM('pending', 'sold'),
-    defaultValue: 'pending',
-  },
+    type: Sequelize.ENUM("pending", "sold"),
+    defaultValue: "pending"
+  }
 });
 
 module.exports = Order;
