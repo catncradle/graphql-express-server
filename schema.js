@@ -5,100 +5,106 @@ const {
   GraphQLSchema,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLEnumType,
-} = require('graphql');
-const { User, Product, Order } = require('./db');
-const { resolver } = require('graphql-sequelize');
-
-//hard coded data
-const customers = [
-  { id: '1', name: 'John Doe', email: 'jdoe@gmail.com', age: 12 },
-  { id: '2', name: 'Jawn Doe', email: 'jdoe@gmail.com', age: 33 },
-  { id: '3', name: 'John Dole', email: 'jdoe@gmail.com', age: 31 },
-  { id: '4', name: 'Vohn Doe', email: 'jdoe@gmail.com', age: 32 },
-];
+  GraphQLEnumType
+} = require("graphql");
+const { User, Product, Order } = require("./db/models");
+const { resolver } = require("graphql-sequelize");
 
 const orderType = new GraphQLObjectType({
-  name: 'order',
+  name: "Order",
   fields: {
     id: {
-      type: GraphQLInt,
+      type: GraphQLString
     },
     status: {
       type: new GraphQLEnumType({
-        name: 'status',
+        name: "status",
         values: {
           pending: { value: 0 },
-          sold: { value: 1 },
-        },
-      }),
+          sold: { value: 1 }
+        }
+      })
+    }
+  }
+});
+
+const productType = new GraphQLObjectType({
+  name: "Product",
+  fields: {
+    id: {
+      type: GraphQLString
     },
-  },
+    quantity: {
+      type: GraphQLInt
+    },
+    name: {
+      type: GraphQLString
+    },
+    category: {
+      type: GraphQLString
+    }
+  }
 });
 
 const userType = new GraphQLObjectType({
-  name: 'User',
+  name: "User",
   fields: {
     id: {
-      type: GraphQLInt,
+      type: GraphQLString
     },
     firstName: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     email: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     lastName: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     orders: {
       type: new GraphQLList(orderType),
-      resolve: resolver(User.Orders),
-    },
-  },
+      resolve: resolver(User.Orders)
+    }
+  }
 });
 
 //we need to create a root query
 const RootQuery = new GraphQLObjectType({
-  name: 'RootQueryType',
+  name: "RootQueryType",
   fields: {
     user: {
       type: userType,
       args: {
-        id: { type: GraphQLInt },
+        id: { type: GraphQLString }
       },
-      resolve(parentValue, args) {
-        // for (let i = 0; i < customers.length; i++) {
-        //   if (customers[i].id === args.id) {
-        //     return customers[i];
-        //   }
-        // }
-      },
+      resolve: resolver(User)
     },
-    customers: {
+    users: {
       type: new GraphQLList(userType),
-      resolve(parentValue, args) {
-        // return customers;
-      },
+      resolve: resolver(User)
     },
-  },
+    products: {
+      type: new GraphQLList(productType),
+      resolve: resolver(Product)
+    }
+  }
 });
 
 const mutation = new GraphQLObjectType({
-  name: 'Mutation',
+  name: "Mutation",
   fields: {
     addCustomer: {
       type: userType,
       args: {
         firstName: { type: new GraphQLNonNull(GraphQLString) },
         email: { type: new GraphQLNonNull(GraphQLString) },
-        lastName: { type: new GraphQLNonNull(GraphQLString) },
+        lastName: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parentValue, args) {
         // return (sqeulize stuff)
-      },
-    },
-  },
+      }
+    }
+  }
 });
 
 module.exports = new GraphQLSchema({ query: RootQuery });
