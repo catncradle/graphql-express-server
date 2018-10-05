@@ -1,0 +1,25 @@
+{
+  "name": "graphql-express-server",
+  "version": "1.0.0",
+  "description": "Simple GraphQL server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev-server": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catncradle/graphql-express-server.git"
+  },
+  "author": "Jack Blake",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/catncradle/graphql-express-server/issues"
+  },
+  "homepage": "https://github.com/catncradle/graphql-express-server#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "express-graphql": "^0.6.12",
+    "nodemon": "^1.18.4"
+  }
+}
