@@ -90,21 +90,74 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
+// const mutation = new GraphQLObjectType({
+//   name: "Mutation",
+//   fields: {
+//     addCustomer: {
+//       type: userType,
+//       args: {
+//         firstName: { type: new GraphQLNonNull(GraphQLString) },
+//         email: { type: new GraphQLNonNull(GraphQLString) },
+//         lastName: { type: new GraphQLNonNull(GraphQLString) }
+//       },
+//       resolve(parentValue, args) {
+//         // return (sqeulize stuff)
+//       }
+//     }
+//   }
+// });
 const mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
-    addCustomer: {
+    addUser: {
       type: userType,
       args: {
         firstName: { type: new GraphQLNonNull(GraphQLString) },
-        email: { type: new GraphQLNonNull(GraphQLString) },
-        lastName: { type: new GraphQLNonNull(GraphQLString) }
+        lastName: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve(parentValue, args) {
-        // return (sqeulize stuff)
+      resolve: async (parentValue, args) => {
+        try {
+          const user = await User.create({ ...args });
+          return user;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    deleteUser: {
+      type: userType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve: async (parentValue, args) => {
+        try {
+          const user = await User.findById(args.id);
+          return user.destroy();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    updateUser: {
+      type: userType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        email: { type: GraphQLString }
+      },
+      resolve: async (parentValue, args) => {
+        try {
+          const user = await User.findById(args.id);
+          await user.update({ ...args });
+          return user;
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   }
 });
 
-module.exports = new GraphQLSchema({ query: RootQuery });
+module.exports = new GraphQLSchema({ query: RootQuery, mutation });
